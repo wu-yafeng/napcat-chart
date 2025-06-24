@@ -4,35 +4,15 @@
 
 ## 安装
 
-### 方法 1: 从 Helm 仓库安装
-
 ```bash
 # 添加 Helm 仓库
-helm repo add napcat https://your-github-username.github.io/napcat-chart
+helm repo add napcat https://wu-yafeng.github.io/napcat-chart
 
 # 更新仓库
 helm repo update
 
 # 安装 chart
 helm install my-napcat napcat/napcat
-```
-
-### 方法 2: 从 OCI Registry 安装
-
-```bash
-# 直接从 OCI registry 安装
-helm install my-napcat oci://ghcr.io/your-github-username/napcat
-```
-
-### 方法 3: 从源码安装
-
-```bash
-# 克隆仓库
-git clone https://github.com/your-github-username/napcat-chart.git
-cd napcat-chart
-
-# 安装
-helm install my-napcat ./chart
 ```
 
 ## 配置
@@ -109,7 +89,7 @@ helm install my-napcat chart/ --dry-run --debug
 helm package chart/
 
 # 更新仓库索引
-helm repo index . --url https://your-github-username.github.io/napcat-chart
+helm repo index . --url https://wu-yafeng.github.io/napcat-chart
 
 # 提交到 gh-pages 分支
 git add .
