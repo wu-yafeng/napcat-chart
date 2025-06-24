@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "napcat.fullname" . }}
+  labels:
+    {{- include "napcat.labels" . | nindent 4 }}
+  annotations:
+    {{- with .Values.service.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  ports:
+    - port: 6099
+      targetPort: webui
+      protocol: TCP
+      name: webui
+    {{- range .Values.httpServers }}
+    - port: {{ .port }}
+      targetPort: {{ .name | quote | lower }}
+      protocol: TCP
+      name: {{ .name | quote | lower }}
+    {{- end }}
+    {{- range .Values.websocketServers }}
+    - port: {{ .port }}
+      targetPort: {{ .name | quote | lower }}
+      protocol: TCP
+      name: {{ .name | quote | lower }}
+    {{- end }}
+  clusterIP: None
+  selector:
+    {{- include "napcat.selectorLabels" . | nindent 4 }}

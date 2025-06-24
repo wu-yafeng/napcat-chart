@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "napcat.fullname" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "napcat.selectorLabels" . | nindent 6 }}
+  serviceName: {{ include "napcat.fullname" . }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "napcat.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          {{- with .Values.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+
+          ports:
+            - name: webui
+              containerPort: 6099
+              protocol: TCP
+            {{- range .Values.httpServers }}
+            - name: {{ .name | quote | lower }}
+              containerPort: {{ .port }}
+              protocol: TCP
+            {{- end }}
+            {{- range .Values.websocketServers }}
+            - name: {{ .name | quote | lower }}
+              containerPort: {{ .port }}
+              protocol: TCP
+            {{- end }}
+
+          volumeMounts:
+            - name: qq
+              mountPath: /app/.config/QQ
+            - name: config
+              mountPath: /app/napcat/config
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "napcat.fullname" . }}
+            defaultMode: 420
+
+  volumeClaimTemplates:
+    - metadata:
+        name: qq
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: {{ .Values.storageClassName }}
+        resources:
+          requests:
+            storage: 1Gi

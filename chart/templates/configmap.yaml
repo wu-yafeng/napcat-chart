@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels: 
+    {{- include "napcat.labels" . | nindent 4 }}
+  name: {{ include "napcat.fullname" . }}
+data:
+  onebot11.json: |
+    {
+      "network": {
+      "httpServers": [
+    {{- range .Values.httpServers }}
+        {
+          "name": "{{ .name }}",
+          "enable": {{ .enabled }},
+          "port": {{ .port }},
+          "host": "{{ .host }}",
+          "enableCors": {{ .enableCors }},
+          "enableWebsocket": {{ .enableWebsocket }},
+          "messagePostFormat": "{{ .messagePostFormat }}",
+          "token": "{{ .token }}",
+          "debug": {{ .debug }},
+        },
+    {{- end }}
+      ],
+      "httpClients": [
+    {{- range .Values.httpClients }}
+        {
+          "name": "{{ .name }}",
+          "enable": {{ .enabled }},
+          "url": "{{ .url }}",
+          "messagePostFormat": "{{ .messagePostFormat }}",
+          "reportSelfMessage": {{ .reportSelfMessage }},
+          "token": "{{ .token }}",
+          "debug": {{ .debug }}
+        },
+    {{- end}}
+      ],
+      "websocketServers": [
+    {{- range .Values.websocketServers }}
+        {
+          "name": "{{ .name }}",
+          "enable": {{ .enabled }},
+          "host": "{{ .host }}",
+          "port": {{ .port }},
+          "messagePostFormat": "{{ .messagePostFormat }}",
+          "reportSelfMessage": {{ .reportSelfMessage }},
+          "token": "{{ .token }}",
+          "enableForcePushEvent": {{ .enableForcePushEvent }},
+          "debug": {{ .debug }},
+          "heartInterval": {{ .heartInterval}}
+        },
+    {{- end}}
+
+      ],
+      "websocketClients": [
+    {{- range .Values.websocketClients }}
+        {
+          "name": "{{ .name }}",
+          "enable": {{ .enabled }},
+          "url": "{{ .url }}",
+          "messagePostFormat": "{{ .messagePostFormat }}",
+          "reportSelfMessage": {{ .reportSelfMessage }},
+          "reconnectInterval" : {{ .reconnectInterval }},
+          "token": "{{ .token }}",
+          "debug": {{ .debug }},
+          "heartInterval": {{ .heartInterval}}
+        },
+    {{- end}}
+      ]
+      },
+      "musicSignUrl": "{{ .Values.musicSignUrl }}",
+      "enableLocalFile2Url": {{ .Values.enableLocalFile2Url }},
+      "parseMultMsg": {{ .Values.parseMultMsg }}
+    }
+
+  napcat.json: |
+    {
+      "fileLog": {{ .Values.fileLog }},
+      "consoleLog": {{ .Values.consoleLog }},
+      "fileLogLevel": "{{ .Values.fileLogLevel }}",
+      "consoleLogLevel": "{{ .Values.consoleLogLevel }}",
+      "packetServer":""
+    }
